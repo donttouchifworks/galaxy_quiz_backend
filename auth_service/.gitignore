@@ -23,3 +23,5 @@ ENV/
 # enviroment
 *.env
 .env.*
+
+#lo
