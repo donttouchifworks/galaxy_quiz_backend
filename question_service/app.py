@@ -1,18 +1,15 @@
 from flask import Flask, jsonify
+from config import Config
+from open_ai.simple_request import make_test_request
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
 
-#example of service
 @app.route('/questions/generate', methods=['GET'])
 def generate_question():
-    print("question service up")
-    mock_response = {
-        "question": "What is the largest planet in the Solar System?",
-        "options": ["Earth", "Jupiter", "Mars", "Venus"],
-        "answer": "Jupiter"
-    }
-    return jsonify(mock_response)
+    question = make_test_request()
+    return question
 
 
 if __name__ == "__main__":
