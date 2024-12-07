@@ -1,0 +1,25 @@
+# Python
+*.pyc
+__pycache__/
+instance/
+*.log
+
+# venv
+venv/
+ENV/
+
+# Pytest
+.pytest_cache/
+.coverage
+
+# Docker
+*.env
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.iml
+
+# enviroment
+*.env
+.env.*
