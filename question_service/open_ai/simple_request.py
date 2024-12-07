@@ -31,7 +31,6 @@ def make_test_request():
     )
 
     event = completion.choices[0].message.parsed
-    print(event)
     return jsonify({
         "question": event.question,
         "correct_answer": event.correct_answer,
