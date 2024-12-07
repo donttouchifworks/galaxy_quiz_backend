@@ -6,12 +6,12 @@ from marshmallow import ValidationError
 from app.schemas import RegisterSchema, LoginSchema
 
 
-@app.route('/auth', methods=['GET'])
+@app.route('/', methods=['GET'])
 def test_service():
     return jsonify({"message": "Auth service is running"})
 
 
-@app.route("/auth/register", methods=["POST"])
+@app.route("/register", methods=["POST"])
 def register():
     logger.info("register route accessed")
     try:
@@ -42,7 +42,7 @@ def register():
         return jsonify({"message": "Internal server error"}), 500
 
 
-@app.route("/auth/login", methods=["POST"])
+@app.route("/login", methods=["POST"])
 def login():
     logger.info("login route accessed")
     try:
