@@ -20,7 +20,7 @@ def make_test_request():
             },
             {
                 "role": "user",
-                "content": "Create 10 questions about solar system with 4 options: 1 correct answer, "
+                "content": "Create a question about solar system with 4 options: 1 correct answer, "
                            "3 false answers but with sense in it."
             },
         ],
