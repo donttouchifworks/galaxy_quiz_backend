@@ -36,7 +36,3 @@ def make_test_request():
         "correct_answer": event.correct_answer,
         "options": event.options
     })
-
-
-def get_key():
-    return current_app.config['AI_KEY']

@@ -6,7 +6,6 @@ from marshmallow import ValidationError
 from app.schemas import RegisterSchema, LoginSchema
 
 
-
 @app.route('/auth', methods=['GET'])
 def test_service():
     return jsonify({"message": "Auth service is running"})

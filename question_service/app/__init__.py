@@ -1,9 +1,7 @@
-import logging
 from flask import Flask, request
-from pymongo import MongoClient
 from config import Config
+import logging
 
-# Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -17,15 +15,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
-# connect to Mongo
-try:
-    mongo = MongoClient(app.config["MONGO_URI"])
-    db = mongo["auth_service"]
-    logger.info("Connected to MongoDB")
-except Exception as e:
-    logger.critical(f"Failed to connect to MongoDB: {e}")
-    raise
 
 
 @app.after_request
@@ -45,6 +34,5 @@ def log_request_info():
         f"Headers: {dict(request.headers)} "
         f"Body: {request.get_data(as_text=True)}"
     )
-
 
 from app import routes
