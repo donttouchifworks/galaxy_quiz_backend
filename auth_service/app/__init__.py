@@ -12,7 +12,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
     handlers=[
-        logging.FileHandler("service.log"),
+        logging.FileHandler("auth_service.log"),
         logging.StreamHandler()
     ]
 )
