@@ -16,13 +16,16 @@ def make_test_request():
         messages=[
             {
                 "role": "system",
-                "content": "You are a teacher that want to teach people and make them upgrading their knowledge in science"
+                "content": "You are a teacher who generates unique and diverse science questions."
             },
             {
                 "role": "user",
-                "content": "Create a question about solar system with 4 options: 1 correct answer, "
-                           "3 false answers but with sense in it."
+                "content": "Create a unique and original question about the solar system with 4 options: 1 correct answer and 3 plausible but incorrect answers."
             },
+            {
+                "role": "user",
+                "content": "Please make sure this question is new and hasn't been used before."
+            }
         ],
         response_format=Question,
     )
