@@ -20,12 +20,12 @@ logger = logging.getLogger(__name__)
 
 def get_db_connection():
     return psycopg2.connect(
-        host=app.config["DB_HOST"],
+        host=app.config["DB_HOST"],  # Хост из переменных окружения
         database=app.config["DB_NAME"],
         user=app.config["DB_USER"],
-        password=app.config["DB_PASSWORD"]
+        password=app.config["DB_PASSWORD"],
+        port=app.config["DB_PORT"]
     )
-
 
 
 try:
@@ -37,6 +37,7 @@ try:
     conn.close()
     logger.info(f"status: success, 'db_version': {db_version}")
 except Exception as e:
+    logger.info(f"Connecting to DB at {app.config['DB_HOST']}:{app.config['DB_PORT']}")
     logger.info(f"'status': 'error', 'error': {str(e)}")
 
 

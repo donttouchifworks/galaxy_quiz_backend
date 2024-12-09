@@ -48,13 +48,18 @@ services:
 
   questions_db:
     image: postgres:15
+    container_name: backend-questions_db-1
     restart: always
     environment:
       POSTGRES_USER: ${QUESTIONS_DB_USER}
       POSTGRES_PASSWORD: ${QUESTIONS_DB_PASSWORD}
       POSTGRES_DB: ${QUESTIONS_DB_NAME}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - galaxy_net
 
   mongo:
     image: mongo:latest
