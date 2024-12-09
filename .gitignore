@@ -1,0 +1,28 @@
+# general
+*.pyc
+__pycache__/
+*.log
+*.swp
+*.swo
+.DS_Store
+
+# Docker
+*.env
+.env.*
+docker-compose.override.yml
+docker-compose.debug.yml
+docker/*.env
+
+**/instance/
+**/venv/
+**/.pytest_cache/
+**/.coverage
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# system
+Thumbs.db

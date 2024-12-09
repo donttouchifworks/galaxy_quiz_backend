@@ -1,0 +1,94 @@
+services:
+  gateway:
+    image: gateway_image
+    build:
+      context: ./gateway_service
+    ports:
+      - "8000"
+#    deploy:
+#      replicas: 2 #Done for test of two services running
+    depends_on:
+      - auth_service
+      - question_service
+    networks:
+      - galaxy_net
+
+  auth_service:
+    image: auth_service_image
+    env_file:
+      - ./auth_service/.env
+    build:
+      context: ./auth_service
+    ports:
+      - "8001"
+    depends_on:
+      - mongo
+    networks:
+      - galaxy_net
+#    deploy:
+#      replicas: 2 #done for test of two services
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  question_service:
+    image: question_service_image
+    env_file:
+      - ./question_service/.env
+    build:
+      context: ./question_service
+    ports:
+      - "8002"
+    networks:
+      - galaxy_net
+    depends_on:
+      - questions_db
+
+  questions_db:
+    image: postgres:15
+    container_name: backend-questions_db-1
+    restart: always
+    environment:
+      POSTGRES_USER: ${QUESTIONS_DB_USER}
+      POSTGRES_PASSWORD: ${QUESTIONS_DB_PASSWORD}
+      POSTGRES_DB: ${QUESTIONS_DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - galaxy_net
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - galaxy_net
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway
+    networks:
+      - galaxy_net
+
+
+networks:
+  galaxy_net:
+    driver: bridge
+
+
+volumes:
+  mongo_data:
+  postgres_data:
