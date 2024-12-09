@@ -43,6 +43,18 @@ services:
       - "8002"
     networks:
       - galaxy_net
+    depends_on:
+      - questions_db
+
+  questions_db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${QUESTIONS_DB_USER}
+      POSTGRES_PASSWORD: ${QUESTIONS_DB_PASSWORD}
+      POSTGRES_DB: ${QUESTIONS_DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   mongo:
     image: mongo:latest
@@ -74,3 +86,4 @@ networks:
 
 volumes:
   mongo_data:
+  postgres_data:

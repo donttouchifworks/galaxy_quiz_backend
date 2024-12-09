@@ -1,6 +1,7 @@
 from flask import Flask, request
 from config import Config
 import logging
+import psycopg2
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -15,6 +16,28 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+
+def get_db_connection():
+    return psycopg2.connect(
+        host=app.config["DB_HOST"],
+        database=app.config["DB_NAME"],
+        user=app.config["DB_USER"],
+        password=app.config["DB_PASSWORD"]
+    )
+
+
+
+try:
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT version();')
+    db_version = cur.fetchone()
+    cur.close()
+    conn.close()
+    logger.info(f"status: success, 'db_version': {db_version}")
+except Exception as e:
+    logger.info(f"'status': 'error', 'error': {str(e)}")
 
 
 @app.after_request
