@@ -1,9 +1,11 @@
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from app import app, db, logger
 from app.utils import hash_password, verify_password, generate_access_token, generate_refresh_token
 from app.auth_middleware import token_required
 from marshmallow import ValidationError
 from app.schemas import RegisterSchema, LoginSchema
+import jwt
+from config import Config
 
 
 @app.route('/', methods=['GET'])
@@ -29,11 +31,16 @@ def register():
         access_token = generate_access_token(data["email"])
         refresh_token = generate_refresh_token(data["email"])
 
-        return jsonify({
-            "user": data['email'],
-            "access_token": access_token,
-            "refresh_token": refresh_token
-        }), 201
+        response = make_response(jsonify({'access_token': access_token}))
+        response.set_cookie(
+            'refresh_token',
+            refresh_token,
+            httponly=True,
+            secure=True,
+            samesite='Strict'
+        )
+        return response
+
     except ValidationError as ve:
         logger.warning(f"Validation error: {ve.messages}")
         return jsonify({"errors": ve.messages}), 400
@@ -70,7 +77,7 @@ def login():
         return jsonify({"message": "Internal server error"}), 500
 
 
-@app.route("/auth/verify", methods=["GET"])
+@app.route("/verify", methods=["GET"])
 @token_required
 def verify():
     """
@@ -81,7 +88,7 @@ def verify():
     return jsonify({"message": "Token is valid", "user": request.user["email"]}), 200
 
 
-@app.route("/auth/refresh", methods=["POST"])
+@app.route("/refresh", methods=["POST"])
 def refresh_token():
     logger.info("refresh token route accessed")
     try:

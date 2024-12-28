@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def get_db_connection():
     return psycopg2.connect(
-        host=app.config["DB_HOST"],  # Хост из переменных окружения
+        host=app.config["DB_HOST"],
         database=app.config["DB_NAME"],
         user=app.config["DB_USER"],
         password=app.config["DB_PASSWORD"],
