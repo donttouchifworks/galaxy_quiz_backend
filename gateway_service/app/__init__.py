@@ -8,6 +8,7 @@ app = Flask(__name__)
 AUTH_SERVICE_URL = "http://auth_service:8001"  # Authentication Service
 QUESTION_SERVICE_URL = "http://question_service:8002"  # Question Generation Service
 
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
 
 # logger setup
 logging.basicConfig(
@@ -42,13 +43,20 @@ def log_request_info():
 
 # Middleware for token check
 def verify_token(token):
+    if not token:
+        return False
+
     try:
-        response = requests.get(f"{AUTH_SERVICE_URL}/verify", headers={"Authorization": token})
-        print(response)
-        logger.info(f"Response: {response}")
-        return response.status_code == 200
+        headers = {key: value for key, value in request.headers if key.lower() != "host"}
+        response = requests.post(f"{AUTH_SERVICE_URL}/verify", headers={"Authorization": token})
+        logger.info(f"response from auth_service: {response.status_code} - {response.text}")
+        data = response.json()
+
+        print(f"🔍 response from auth_service: {data}")
+
+        return data.get("valid", False)
     except requests.exceptions.RequestException as e:
-        logger.warning(f"Not Authorised: {e}")
+        logger.warning(f"Error on token validation: {e}")
         return False
 
 
@@ -67,17 +75,41 @@ def auth_service(path):
 def question_service(path):
     token = request.headers.get("Authorization")
     logger.info(f"questions service: {path}")
-    if not token or not verify_token(token):
+
+    if not verify_token(token):
         logger.warning(f"Validation error, token missing")
         return jsonify({"error": "Unauthorized"}), 401
+
+    headers = {key: value for key, value in request.headers.items() if key.lower() not in ["host", "content-length"]}
+
+    # files = request.files if "file" in request.files else None
+    data = request.form if request.form else None
+
+    # logger.info("files :", files)
 
     url = f"{QUESTION_SERVICE_URL}/{path}"
     response = requests.request(
         method=request.method,
         url=url,
-        headers={**request.headers, "Content-Type": "application/json"},
+        headers=headers,
+        # files=files,
+        data=data
     )
-    logger.info(f"questions service: {response}")
+
+    logger.info(f"Response from question service: Status {response.status_code}, Body: {response.text}")
+
+    # if response.status_code == 413:
+    #     return jsonify({"error": "File too large"}), 413
+
+    if response.status_code != 200:
+        return jsonify(
+            {"error": "Request failed", "status": response.status_code, "body": response.text}), response.status_code
+    # try:
+    #     response_data = response
+    # except ValueError:
+    #     logger.error(f"Error decoding JSON response: {response.text}")
+    #     return jsonify({"error": "Invalid response from question service"}), 500
+
     return jsonify(response.json()), response.status_code
 
 

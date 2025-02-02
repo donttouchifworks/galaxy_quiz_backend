@@ -77,7 +77,7 @@ def login():
         return jsonify({"message": "Internal server error"}), 500
 
 
-@app.route("/verify", methods=["GET"])
+@app.route("/verify", methods=["POST"])
 @token_required
 def verify():
     """
@@ -85,7 +85,7 @@ def verify():
     Requires the Authorization header with a Bearer token.
     """
     logger.info(f"Token verification successful for user: {request.user['email']}")
-    return jsonify({"message": "Token is valid", "user": request.user["email"]}), 200
+    return jsonify({"message": "Token is valid", "user": request.user["email"], "valid": True}), 200
 
 
 @app.route("/refresh", methods=["POST"])
