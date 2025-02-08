@@ -1,5 +1,5 @@
 import google.generativeai as genai
-from ..app import app
+from ..app import app, logger
 from pydantic import BaseModel
 import json
 
@@ -30,4 +30,5 @@ def generate_questions_gemini(prev_questions):
 
     data = json.loads(result.text)
     questions_list = [q for q in data["questions"]]
+    logger.info(questions_list)
     return dict(title=data["title"], questions=questions_list)

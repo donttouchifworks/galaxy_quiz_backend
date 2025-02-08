@@ -1,11 +1,13 @@
 from .database.db_gateway import get_all_questions_db, insert_questions
 from ..openAI import generate_ai_question
 from ..gemini import generate_questions_gemini
+from . import logger
 
 
 def generate_questions_openAI():
     prev_questions = get_all_questions_db()
     questions=generate_ai_question(prev_questions)
+    logger.info(questions)
     converted_questions = convert_correct_answer_to_index(questions['questions'])
     insert_questions(converted_questions, questions['title'])
     return converted_questions
@@ -14,8 +16,9 @@ def generate_questions_openAI():
 def generate_questions_Gemini():
     prev_questions = get_all_questions_db()
     questions= generate_questions_gemini(prev_questions)
+    logger.info(questions)
     converted_questions = convert_correct_answer_to_index(questions['questions'])
-    insert_questions(converted_questions['questions'], questions['title'])
+    insert_questions(converted_questions, questions['title'])
     return converted_questions
 
 

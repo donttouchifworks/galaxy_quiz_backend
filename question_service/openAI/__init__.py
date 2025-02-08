@@ -35,8 +35,6 @@ def generate_ai_question(prev_questions):
     event = completion.choices[0].message.parsed
     questions_list = [q.dict() for q in event.questions]
 
-    print(questions_list)
-
     return dict(title=event.title, questions=questions_list)
 
 

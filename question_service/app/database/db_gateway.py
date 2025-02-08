@@ -3,7 +3,6 @@ from .db_model import get_db_connection, check_table_exists, create_table
 
 
 def insert_question(question_data):
-    print(question_data)
     """add question"""
     insert_query = """
     INSERT INTO questions (question, correct_answer, answer_1, answer_2, answer_3, answer_4, topic)
