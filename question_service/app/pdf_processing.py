@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import PyPDF2
 import os
-from app import app
+from . import app
 
 # folder for pdf
 UPLOAD_FOLDER = './uploads'

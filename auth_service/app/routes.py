@@ -1,19 +1,21 @@
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, Blueprint
 from app import app, db, logger
-from app.utils import hash_password, verify_password, generate_access_token, generate_refresh_token
-from app.auth_middleware import token_required
+from .utils import hash_password, verify_password, generate_access_token, generate_refresh_token
+from .auth_middleware import token_required
 from marshmallow import ValidationError
-from app.schemas import RegisterSchema, LoginSchema
+from .schemas import RegisterSchema, LoginSchema
 import jwt
 from config import Config
 
+main = Blueprint('main', __name__)
 
-@app.route('/', methods=['GET'])
+
+@main.route('/service', methods=['GET'])
 def test_service():
     return jsonify({"message": "Auth service is running"})
 
 
-@app.route("/register", methods=["POST"])
+@main.route("/register", methods=["POST"])
 def register():
     logger.info("register route accessed")
     try:
@@ -49,7 +51,7 @@ def register():
         return jsonify({"message": "Internal server error"}), 500
 
 
-@app.route("/login", methods=["POST"])
+@main.route("/login", methods=["POST"])
 def login():
     logger.info("login route accessed")
     try:
@@ -77,7 +79,7 @@ def login():
         return jsonify({"message": "Internal server error"}), 500
 
 
-@app.route("/verify", methods=["POST"])
+@main.route("/verify", methods=["POST"])
 @token_required
 def verify():
     """
@@ -85,10 +87,20 @@ def verify():
     Requires the Authorization header with a Bearer token.
     """
     logger.info(f"Token verification successful for user: {request.user['email']}")
-    return jsonify({"message": "Token is valid", "user": request.user["email"], "valid": True}), 200
+    user = db.users.find_one({"email": request.user['email']})
+    if user:
+        user["_id"] = str(user["_id"])
+    return jsonify({
+        "message": "Token is valid",
+        "valid": True,
+        "user": {
+            "id":user["_id"],
+            "email": user["email"]
+        },
+    }), 200
 
 
-@app.route("/refresh", methods=["POST"])
+@main.route("/refresh", methods=["POST"])
 def refresh_token():
     logger.info("refresh token route accessed")
     try:
@@ -114,3 +126,17 @@ def refresh_token():
         logger.error(f"Error during token refresh: {type(e).__name__} - {e}")
         return jsonify({"message": "Internal server error"}), 500
 
+
+@main.route("/profile", methods=["POST"])
+@token_required
+def get_user_profile():
+    logger.info(f"Token verification successful for user: {request.user['email']}")
+    user = db.users.find_one({"email": request.user['email']})
+    if user:
+        user["_id"] = str(user["_id"])
+    return jsonify({
+        "user": {
+            "id":user["_id"],
+            "email": user["email"]
+        },
+    }), 200

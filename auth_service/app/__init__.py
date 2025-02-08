@@ -47,4 +47,5 @@ def log_request_info():
     )
 
 
-from app import routes
+from .routes import main
+app.register_blueprint(main)

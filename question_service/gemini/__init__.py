@@ -1,6 +1,5 @@
 import google.generativeai as genai
-from flask import current_app
-from app import app
+from ..app import app
 from pydantic import BaseModel
 import json
 

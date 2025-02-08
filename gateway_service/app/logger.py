@@ -2,7 +2,6 @@ import logging
 from flask import current_app, request
 
 
-# logger setup
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",

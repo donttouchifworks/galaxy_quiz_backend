@@ -1,6 +1,5 @@
-from app import app, logger
+from . import logger
 from .db_model import get_db_connection, check_table_exists, create_table
-import json
 
 
 def insert_question(question_data):
@@ -31,11 +30,11 @@ def insert_question(question_data):
 
 
 def insert_questions(questions, title):
-    if not check_table_exists():
-        print("Таблица 'questions' не найдена. Создание...")
+    if not check_table_exists("questions"):
+        print("Table doesn't exist. Creating...")
         create_table()
     else:
-        print("Таблица 'questions' уже существует.")
+        print("Table 'questions' already exist.")
     for item in questions:
         item['topic'] = title
         insert_question(item)
@@ -97,3 +96,35 @@ def transform_questions(data):
             "topic": item[7]               # topic
         })
     return transformed
+
+
+def get_question_by_id_db(question_id):
+    """Retrieve question by ID"""
+    select_query = """
+    SELECT id, question, correct_answer, answer_1, answer_2, answer_3, answer_4, topic
+    FROM questions
+    WHERE id = %s;
+    """
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(select_query, (question_id,))
+        result = cur.fetchone()  # Retrieve a single record
+        cur.close()
+        conn.close()
+
+        if result:
+            question = {
+                'id': result[0],
+                'question': result[1],
+                'correct_answer': result[2],
+                'options': [result[3], result[4], result[5], result[6]],
+                'topic': result[7]
+            }
+            return question
+        else:
+            logger.warn(f"No question found with ID: {question_id}")
+            return None
+    except Exception as e:
+        logger.error(f"Error during fetching question: {e}")
+        return None

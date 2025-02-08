@@ -19,6 +19,9 @@ docker/*.env
 **/.coverage
 coverage/
 
+*/service.log
+**/service.log
+
 # IDE
 .vscode/
 .idea/
