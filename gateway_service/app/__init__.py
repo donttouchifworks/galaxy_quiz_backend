@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import logging
-from config import Config, Config_dev
+from config import Config
 
 
 def create_app():
@@ -21,10 +21,6 @@ def create_app():
 
 #
 # app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
-
-# logger setup
-
-
 
 # @app.after_request
 # def log_response_info(response):
@@ -49,4 +45,4 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000, debug=app.config["DEBUG"])

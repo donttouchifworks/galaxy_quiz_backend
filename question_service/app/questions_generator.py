@@ -1,6 +1,6 @@
 from .database.db_gateway import get_all_questions_db, insert_questions
-from ..openAI import generate_ai_question
-from ..gemini import generate_questions_gemini
+from .openAI import generate_ai_question
+from .gemini import generate_questions_gemini
 from . import logger
 
 

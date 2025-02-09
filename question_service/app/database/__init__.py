@@ -1,6 +1,6 @@
 from .db_model import get_db_connection,check_table_exists,create_table
 from time import sleep
-from ...app import app, logger
+from .. import app, logger
 
 
 def init_db():

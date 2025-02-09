@@ -15,6 +15,9 @@ docker/*.env
 
 **/instance/
 **/venv/
+**/.venv
+**/venv/*
+**/.venv/*
 **/.pytest_cache/
 **/.coverage
 coverage/

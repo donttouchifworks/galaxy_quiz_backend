@@ -1,5 +1,5 @@
 import google.generativeai as genai
-from ..app import app, logger
+from .. import app, logger
 from pydantic import BaseModel
 import json
 

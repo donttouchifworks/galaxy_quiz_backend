@@ -3,6 +3,10 @@ services:
     image: gateway_image
     build:
       context: ./gateway_service
+    volumes:
+      - ./gateway_service:/app
+    env_file:
+      - ./gateway_service/.env.${ENVIRONMENT}
     ports:
       - "8000:8000"
 #    deploy:
@@ -13,11 +17,18 @@ services:
       - questions_history_service
     networks:
       - galaxy_net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://gateway:8003/service" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   auth_service:
     image: auth_service_image
     env_file:
-      - ./auth_service/.env
+      - ./auth_service/.env.${ENVIRONMENT}
+    volumes:
+      - ./auth_service:/app
     build:
       context: ./auth_service
     ports:
@@ -29,7 +40,7 @@ services:
 #    deploy:
 #      replicas: 2 #done for test of two services
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: ["CMD", "curl", "-f", "http://auth_service:8001/service"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -37,19 +48,19 @@ services:
   questions_history_service:
     image: questions_history_service_image
     env_file:
-      - ./questions_history/.env
+      - questions_history/.env.${ENVIRONMENT}
     build:
       context: ./questions_history
+    volumes:
+      - ./questions_history:/app
     ports:
       - "8003:8003"
-    depends_on:
-      - question_history_db
     networks:
       - galaxy_net
     #    deploy:
     #      replicas: 2 #done for test of two services
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8001/health" ]
+      test: [ "CMD", "curl", "-f", "http://questions_history_service:8003/service" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -57,24 +68,27 @@ services:
   question_service:
     image: question_service_image
     env_file:
-      - ./question_service/.env
+      - question_service/.env.${ENVIRONMENT}
     build:
       context: ./question_service
+    volumes:
+      - ./question_service:/app
     ports:
       - "8002:8002"
     networks:
       - galaxy_net
     depends_on:
       - questions_db
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://question_service:8002/service" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   questions_db:
     image: postgres:15
     container_name: questions_db
     restart: always
-    environment:
-      POSTGRES_USER: ${QUESTIONS_DB_USER}
-      POSTGRES_PASSWORD: ${QUESTIONS_DB_PASSWORD}
-      POSTGRES_DB: ${QUESTIONS_DB_NAME}
     ports:
       - "5432:5432"
     volumes:
@@ -92,15 +106,15 @@ services:
     networks:
       - galaxy_net
 
-  question_history_db:
-    image: mongo:latest
-    container_name: mongo_question_history
-    ports:
-      - "27019:27019"
-    volumes:
-      - mongo_question_history_data:/data/db
-    networks:
-      - galaxy_net
+#  question_history_db:
+#    image: mongo:latest
+#    container_name: mongo_question_history
+#    ports:
+#      - "27019:27019"
+#    volumes:
+#      - mongo_question_history_data:/data/db
+#    networks:
+#      - galaxy_net
 
   nginx:
     image: nginx:latest

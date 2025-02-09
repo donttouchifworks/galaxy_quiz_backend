@@ -89,7 +89,7 @@ def questions_history_service(path, user):
     return jsonify(response.json()), response.status_code
 
 # test route
-@main.route('/', methods=['GET'])
+@main.route('/service', methods=['GET'])
 def home():
     logger.info("test passed gateway service running")
     return jsonify({"message": "API Gateway is running!"})

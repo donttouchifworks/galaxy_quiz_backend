@@ -1,5 +1,5 @@
 import psycopg2
-from ...app import app, logger
+from .. import app, logger
 
 
 def get_db_connection():

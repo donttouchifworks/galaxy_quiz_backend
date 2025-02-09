@@ -1,7 +1,7 @@
 from flask import current_app, jsonify
 from openai import OpenAI
 from pydantic import BaseModel, field_validator
-from ..app import app
+from .. import app
 
 
 class Question(BaseModel):

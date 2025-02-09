@@ -1,6 +1,6 @@
 from . import app
 from flask import jsonify, request
-from ..openAI import generate_question_from_txt
+from .openAI import generate_question_from_txt
 from .pdf_processing import upload_pdf
 from .database.db_gateway import get_unasked_questions_db, get_question_by_id_db
 from .questions_generator import generate_questions_openAI, generate_questions_Gemini
