@@ -31,6 +31,7 @@ def get_question_openai():
 
     if not questions_available:
         generate_questions_openAI()
+        get_question_openai()
 
     questions_available = get_unasked_questions_db(questions_asked)
 
@@ -59,6 +60,7 @@ def get_question_gemini():
 
     if not questions_available:
         generate_questions_Gemini()
+        get_question_gemini()
 
     questions_available = get_unasked_questions_db(questions_asked)
 

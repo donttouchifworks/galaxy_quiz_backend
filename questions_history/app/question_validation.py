@@ -17,7 +17,8 @@ def validate_question(question_id, answer_given):
 
         if not question:
             return jsonify({"error": "Question doesn't exist"}), 404
-
+        if 0 < answer_given > 3:
+            return jsonify({"error": "Wrong answer range"}), 404
         correct = validate_answer_given(str(answer_given), question)
         return correct
     except Exception as e:

@@ -23,10 +23,14 @@ def generate_questions_Gemini():
 
 
 def convert_correct_answer_to_index(questions):
+    converted = []
     for question in questions:
+        logger.info(f"Processing question: {question}")
         if "correct_answer" in question and "options" in question:
             try:
                 question["correct_answer"] = question["options"].index(question["correct_answer"])
+                converted.append(question)
             except ValueError:
-                raise ValueError(f"Correct answer '{question['correct_answer']}' not found in options {question['options']}")
-    return questions
+                logger.warning(f"Skipping question, correct answer '{question['correct_answer']}' not found in {question['options']}")
+    logger.info(f"Converted questions count: {len(converted)}")
+    return converted

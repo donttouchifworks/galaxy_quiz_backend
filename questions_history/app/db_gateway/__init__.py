@@ -67,6 +67,7 @@ def get_questions_asked_to_user(user_id):
         return question_list
     except Exception as e:
         logger.critical(f"Failed to get items from Question History DB: {e}")
+        raise
 
 
 def is_question_already_asked(user_id, question_id):

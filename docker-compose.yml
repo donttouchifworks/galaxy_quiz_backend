@@ -89,6 +89,8 @@ services:
     image: postgres:15
     container_name: questions_db
     restart: always
+    env_file:
+      - .env.${ENVIRONMENT}
     ports:
       - "5432:5432"
     volumes:
@@ -103,8 +105,11 @@ services:
       - "27017:27017"
     volumes:
       - mongo_auth_data:/data/db
+    env_file:
+      - .env.${ENVIRONMENT}
     networks:
       - galaxy_net
+    command: mongod --auth
 
 #  question_history_db:
 #    image: mongo:latest
