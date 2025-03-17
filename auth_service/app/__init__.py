@@ -2,9 +2,11 @@ import logging
 from flask import Flask, request
 from pymongo import MongoClient
 from config import Config
+from flask_cors import CORS
 
 # Flask app
 app = Flask(__name__)
+CORS(app)
 app.config.from_object(Config)
 
 # logger setup
