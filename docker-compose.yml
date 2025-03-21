@@ -8,7 +8,7 @@ services:
     env_file:
       - ./gateway_service/.env.${ENVIRONMENT}
     ports:
-      - "8000:8000"
+      - "8000"
 #    deploy:
 #      replicas: 2 #Done for test of two services running
     depends_on:
@@ -32,7 +32,7 @@ services:
     build:
       context: ./auth_service
     ports:
-      - "8001:8001"
+      - "8001"
     depends_on:
       - mongo_auth
     networks:
@@ -54,7 +54,7 @@ services:
     volumes:
       - ./questions_history:/app
     ports:
-      - "8003:8003"
+      - "8003"
     networks:
       - galaxy_net
     #    deploy:
@@ -74,7 +74,7 @@ services:
     volumes:
       - ./question_service:/app
     ports:
-      - "8002:8002"
+      - "8002"
     networks:
       - galaxy_net
     depends_on:
@@ -92,7 +92,7 @@ services:
     env_file:
       - .env.${ENVIRONMENT}
     ports:
-      - "5432:5432"
+      - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -102,7 +102,7 @@ services:
     image: mongo:latest
     container_name: mongo_auth
     ports:
-      - "27017:27017"
+      - "27017"
     volumes:
       - mongo_auth_data:/data/db
     env_file:
